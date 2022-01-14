@@ -104,7 +104,7 @@ namespace ag.WPF.UpDown
             DefaultStyleKeyProperty.OverrideMetadata(typeof(UpDown), new FrameworkPropertyMetadata(typeof(UpDown)));
         }
 
-        #region Public properties
+        #region Public dependency properties handlers
 
         /// <summary>
         /// Gets or sets the value that indicates whether group separator is used for number formatting
@@ -175,6 +175,20 @@ namespace ag.WPF.UpDown
         #endregion
 
         #region Routed events
+        /// <summary>
+        /// Occurs when the <see cref="IsReadOnly"/> property has been changed in some way
+        /// </summary>
+        public event RoutedPropertyChangedEventHandler<bool> IsReadOnlyChanged
+        {
+            add => AddHandler(IsReadOnlyChangedEvent, value);
+            remove => RemoveHandler(IsReadOnlyChangedEvent, value);
+        }
+        /// <summary>
+        /// Identifies the <see cref="IsReadOnlyChanged"/> routed event
+        /// </summary>
+        public static readonly RoutedEvent IsReadOnlyChangedEvent = EventManager.RegisterRoutedEvent("IsReadOnlyChanged",
+            RoutingStrategy.Bubble, typeof(RoutedPropertyChangedEventHandler<bool>), typeof(UpDown));
+
         /// <summary>
         /// Occurs when the <see cref="UseGroupSeparator"/> property has been changed in some way
         /// </summary>
@@ -271,9 +285,25 @@ namespace ag.WPF.UpDown
         #endregion
 
         #region Callback procedures
+        /// <summary>
+        /// Invoked just before the <see cref="IsReadOnlyChanged"/> event is raised on UpDown
+        /// </summary>
+        /// <param name="oldValue">Old value</param>
+        /// <param name="newValue">New value</param>
+        private void OnIsReadOnlyChanged(bool oldValue, bool newValue)
+        {
+            var e = new RoutedPropertyChangedEventArgs<bool>(oldValue, newValue)
+            {
+                RoutedEvent = IsReadOnlyChangedEvent
+            };
+            RaiseEvent(e);
+        }
         private static void OnIsReadOnlyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
+            if (sender is not UpDown upd) return;
+            upd.OnIsReadOnlyChanged((bool)e.OldValue, (bool)e.NewValue);
         }
+
         /// <summary>
         /// Invoked just before the <see cref="UseGroupSeparatorChanged"/> event is raised on UpDown
         /// </summary>
@@ -332,18 +362,6 @@ namespace ag.WPF.UpDown
             upd.OnDecimalPlacesChanged((uint)e.OldValue, (uint)e.NewValue);
         }
 
-        //private static object CoerceDecimalPlaces(DependencyObject d, object value)
-        //{
-        //    if (!(d is UpDown upd)) return value;
-        //    var fraction = upd.Step - decimal.Truncate(upd.Step);
-        //    var count = Convert.ToUInt32(value);
-        //    var arr =
-        //        fraction.ToString("f", CultureInfo.CurrentCulture)
-        //            .Split(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator.ToCharArray());
-        //    if (arr.Length == 2 && arr[1].Length > count)
-        //        count = (uint) arr[1].Length;
-        //    return count;
-        //}
         /// <summary>
         /// Invoked just before the <see cref="StepChanged"/> event is raised on UpDown
         /// </summary>
@@ -377,6 +395,7 @@ namespace ag.WPF.UpDown
                 upd.DecimalPlaces = (uint)arr[1].Length;
             return step;
         }
+
         /// <summary>
         /// Invoked just before the <see cref="MinValueChanged"/> event is raised on UpDown
         /// </summary>
@@ -398,6 +417,7 @@ namespace ag.WPF.UpDown
             upd.CoerceValue(ValueProperty);
             upd.OnMinValueChanged(Convert.ToDecimal(e.OldValue), Convert.ToDecimal(e.NewValue));
         }
+
         /// <summary>
         /// Invoked just before the <see cref="MaxValueChanged"/> event is raised on UpDown
         /// </summary>
@@ -425,6 +445,7 @@ namespace ag.WPF.UpDown
             if (d is not UpDown upd) return value;
             return max < upd.MinValue ? upd.MinValue : value;
         }
+
         /// <summary>
         /// Invoked just before the <see cref="ValueChanged"/> event is raised on UpDown
         /// </summary>
@@ -457,20 +478,11 @@ namespace ag.WPF.UpDown
 
         #region Overrides
         /// <summary>
-        /// When overridden in a derived class, is invoked whenever application code or internal processes call ApplyTemplate
+        /// Is invoked whenever application code or internal processes call ApplyTemplate
         /// </summary>
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-
-            //var bd = new Binding("Value")
-            //{
-            //    Mode = BindingMode.TwoWay,
-            //    RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor, typeof(UpDown), 1),
-            //    Converter = new TextToDecimalConverter(),
-            //    ConverterParameter = this,
-            //    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-            //};
 
             if (_textBox != null)
             {
@@ -478,7 +490,6 @@ namespace ag.WPF.UpDown
                 _textBox.PreviewKeyDown -= TextBox_PreviewKeyDown;
                 _textBox.PreviewMouseRightButtonUp -= TextBox_PreviewMouseRightButtonUp;
                 _textBox.TextChanged -= TextBox_TextChanged;
-                //BindingOperations.ClearAllBindings(_Text);
             }
             _textBox = GetTemplateChild(ElementText) as TextBox;
             if (_textBox != null)
@@ -487,7 +498,6 @@ namespace ag.WPF.UpDown
                 _textBox.PreviewKeyDown += TextBox_PreviewKeyDown;
                 _textBox.PreviewMouseRightButtonUp += TextBox_PreviewMouseRightButtonUp;
                 _textBox.TextChanged += TextBox_TextChanged;
-                //_Text.SetBinding(TextBox.TextProperty, bd);
             }
 
             if (_downButton != null)
@@ -548,7 +558,6 @@ namespace ag.WPF.UpDown
                 case CurrentKey.Number:
                     if (DecimalPlaces == 0 || _textBox.Text.Length == 0) return;
                     var position = _Position.Offset == -1 ? 1 : _textBox.Text.Length - _Position.Offset;
-                    // ReSharper disable once RedundantCheckBeforeAssignment
                     if (_textBox.CaretIndex != position)
                         _textBox.CaretIndex = position;
                     break;
@@ -666,20 +675,6 @@ namespace ag.WPF.UpDown
                             break;
                         }
                         _Position.Key = CurrentKey.Number;
-                        //{
-                        //    var temp = _Text.Text.ToCharArray().ToList();
-                        //    if (_Text.SelectionLength > 0)
-                        //    {
-                        //        for (var i = _Text.SelectionStart + _Text.SelectionLength - 1; i >= _Text.SelectionStart; i--)
-                        //        {
-                        //            temp.RemoveAt(i);
-                        //        }
-                        //    }
-                        //    temp.Insert(_Text.SelectionStart, charFromNumberKey(e.Key));
-                        //    Value = (decimal)new TextToDecimalConverter().ConvertBack(new string(temp.ToArray()), null, this,
-                        //        CultureInfo.CurrentCulture);
-                        //    e.Handled = true;
-                        //}
                         if (DecimalPlaces > 0)
                         {
                             var sepPos = _textBox.Text.IndexOf(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, StringComparison.Ordinal);

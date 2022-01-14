@@ -5,7 +5,11 @@ VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ag.WPF.UpDown", "ag.WPF.UpDown\ag.WPF.UpDown.csproj", "{54359807-AE52-4336-A71A-B8CF79EB2889}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ag.WPF.UpDown.NET", "ag.WPF.UpDown.NET\ag.WPF.UpDown.NET.csproj", "{4A6A56C9-C216-488A-AB6B-9D31F383D2B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ag.WPF.UpDown.NET", "ag.WPF.UpDown.NET\ag.WPF.UpDown.NET.csproj", "{4A6A56C9-C216-488A-AB6B-9D31F383D2B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestUpDown", "TestUpDown\TestUpDown.csproj", "{508E5730-0148-4B07-8F9A-C7A258A5C977}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestUpDownNET", "TestUpDownNET\TestUpDownNET.csproj", "{53329AA5-5DFF-4908-9EE1-2EFDDEF1121A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{4A6A56C9-C216-488A-AB6B-9D31F383D2B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A6A56C9-C216-488A-AB6B-9D31F383D2B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A6A56C9-C216-488A-AB6B-9D31F383D2B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{508E5730-0148-4B07-8F9A-C7A258A5C977}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{508E5730-0148-4B07-8F9A-C7A258A5C977}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{508E5730-0148-4B07-8F9A-C7A258A5C977}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{508E5730-0148-4B07-8F9A-C7A258A5C977}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53329AA5-5DFF-4908-9EE1-2EFDDEF1121A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53329AA5-5DFF-4908-9EE1-2EFDDEF1121A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53329AA5-5DFF-4908-9EE1-2EFDDEF1121A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53329AA5-5DFF-4908-9EE1-2EFDDEF1121A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
