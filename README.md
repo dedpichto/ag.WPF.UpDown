@@ -6,7 +6,7 @@ Custom WPF UpDown control with button spinners that allows incrementing and decr
 |--|---
 ![Nuget](https://img.shields.io/nuget/v/ag.WPF.UpDown) | ![Nuget](https://img.shields.io/nuget/v/ag.WPF.UpDown.NET)
 
-![ag.WPF.UpDown](https://am3pap005files.storage.live.com/y4mSekd7bc2AyP1hfqoMK_SB7kIS8jTXNBAigd2iigKv8MT5AK6cThVj1epV2nXNSMwX3xkD0MZHjxDkwe3TXiGs6yhknHIpEJNukzmvEB54cdWHKeejX8ZbYGt-t0tJCR7Md_Ktw6OQDo73H68g1Qlr1zwqUbtKAQHmShGnCnS2JBym4GzzzBc7NIQ5tu9TrLo?width=134&height=62&cropmode=none "ag.WPF.UpDown")
+![ag.WPF.UpDown](https://am3pap005files.storage.live.com/y4mSptr4gIhux74b5jb3_nGOZ52MC6ui2oyA1iNWoahGuYdG6ziKy0w1500c-DpaMWzVoFBfgyngSpM9l4fo2Y2jdoDGc7g7QKCFUzNvTPLnv-6hOlB7EZ8o9S3WKjNqAz-Glcs4tSfUb9aVI4iSS-popd7YZTOVTR6t-mHZ_bQvxaZvf1_C1P_HEjjQgNZwwuY?width=122&height=60&cropmode=none "ag.WPF.UpDown")
 
 ## Installation
 
