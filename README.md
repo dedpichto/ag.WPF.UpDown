@@ -14,7 +14,7 @@ Use Nuget packages
 
 .NET Frameword | .NET
 |--|---
-![ag.WPF.UpDown](https://www.nuget.org/packages/ag.WPF.UpDown/) | ![ag.WPF.UpDown.NET](https://www.nuget.org/packages/ag.WPF.UpDown.NET/)
+[ag.WPF.UpDown](https://www.nuget.org/packages/ag.WPF.UpDown/) | [ag.WPF.UpDown.NET](https://www.nuget.org/packages/ag.WPF.UpDown.NET/)
 
 ## Usage
 
