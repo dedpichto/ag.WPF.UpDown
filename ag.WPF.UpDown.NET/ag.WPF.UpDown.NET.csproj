@@ -4,8 +4,18 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <Authors>Andrey Gruber</Authors>
+    <Description>Custom WPF control with button spinners that allows incrementing and decrementing numeric values by using the spinner buttons and keyboard up/down arrows.</Description>
+    <Copyright>© Andrey Gruber 2022</Copyright>
+    <RepositoryUrl>https://github.com/dedpichto/ag.WPF.UpDown</RepositoryUrl>
+    <PackageTags>WPF UpDown .NET Custom</PackageTags>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+  
   <ItemGroup>
     <Compile Include="..\ag.WPF.UpDown\UpDown.cs" Link="UpDown.cs" />
   </ItemGroup>

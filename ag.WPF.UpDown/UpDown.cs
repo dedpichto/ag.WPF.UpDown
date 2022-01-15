@@ -11,7 +11,7 @@ using System.Windows.Media;
 namespace ag.WPF.UpDown
 {
     /// <summary>
-    /// Represents custom numeric UpDown control
+    /// Represents custom control with button spinners that allows incrementing and decrementing numeric values by using the spinner buttons and keyboard up/down arrows.
     /// </summary>
     #region Named parts
     [TemplatePart(Name = ElementText, Type = typeof(TextBox))]
@@ -100,7 +100,7 @@ namespace ag.WPF.UpDown
         #region Public dependency properties handlers
 
         /// <summary>
-        /// Gets or sets the value that indicates whether group separator is used for number formatting
+        /// Gets or sets the value that indicates whether group separator is used for number formatting.
         /// </summary>
         public bool UseGroupSeparator
         {
@@ -109,7 +109,7 @@ namespace ag.WPF.UpDown
         }
 
         /// <summary>
-        /// Gets or sets the value that indicates whether UpDown is in read-only state
+        /// Gets or sets the value that indicates whether UpDown is in read-only state.
         /// </summary>
         public bool IsReadOnly
         {
@@ -118,7 +118,7 @@ namespace ag.WPF.UpDown
         }
 
         /// <summary>
-        /// Gets or sets the value that indicates the count of decimal digits shown at UpDown
+        /// Gets or sets the value that indicates the count of decimal digits shown at UpDown.
         /// </summary>
         public uint DecimalPlaces
         {
@@ -126,7 +126,7 @@ namespace ag.WPF.UpDown
             set => SetValue(DecimalPlacesProperty, value);
         }
         /// <summary>
-        /// Gets or sets the Brush to apply to the text contents of UpDown
+        /// Gets or sets the Brush to apply to the text contents of UpDown when control's value is negative.
         /// </summary>
         public SolidColorBrush NegativeForeground
         {
@@ -134,7 +134,7 @@ namespace ag.WPF.UpDown
             set => SetValue(NegativeForegroundProperty, value);
         }
         /// <summary>
-        /// Gets or sets the value to increment or decrement UpDown when the up or down buttons are clicked
+        /// Gets or sets the value to increment or decrement UpDown when the up or down buttons are clicked.
         /// </summary>
         public decimal Step
         {
@@ -142,7 +142,7 @@ namespace ag.WPF.UpDown
             set => SetValue(StepProperty, value);
         }
         /// <summary>
-        /// Gets or sets the minimum allowed value of UpDown
+        /// Gets or sets the minimum allowed value of UpDown.
         /// </summary>
         public decimal MinValue
         {
@@ -150,7 +150,7 @@ namespace ag.WPF.UpDown
             set => SetValue(MinValueProperty, value);
         }
         /// <summary>
-        /// Gets or sets the maximum allowed value of UpDown
+        /// Gets or sets the maximum allowed value of UpDown.
         /// </summary>
         public decimal MaxValue
         {
@@ -158,7 +158,7 @@ namespace ag.WPF.UpDown
             set => SetValue(MaxValueProperty, value);
         }
         /// <summary>
-        /// Gets or sets the value of UpDown
+        /// Gets or sets the value of UpDown.
         /// </summary>
         public decimal Value
         {
@@ -169,7 +169,7 @@ namespace ag.WPF.UpDown
 
         #region Routed events
         /// <summary>
-        /// Occurs when the <see cref="IsReadOnly"/> property has been changed in some way
+        /// Occurs when the <see cref="IsReadOnly"/> property has been changed in some way.
         /// </summary>
         public event RoutedPropertyChangedEventHandler<bool> IsReadOnlyChanged
         {
@@ -177,13 +177,13 @@ namespace ag.WPF.UpDown
             remove => RemoveHandler(IsReadOnlyChangedEvent, value);
         }
         /// <summary>
-        /// Identifies the <see cref="IsReadOnlyChanged"/> routed event
+        /// Identifies the <see cref="IsReadOnlyChanged"/> routed event.
         /// </summary>
         public static readonly RoutedEvent IsReadOnlyChangedEvent = EventManager.RegisterRoutedEvent("IsReadOnlyChanged",
             RoutingStrategy.Bubble, typeof(RoutedPropertyChangedEventHandler<bool>), typeof(UpDown));
 
         /// <summary>
-        /// Occurs when the <see cref="UseGroupSeparator"/> property has been changed in some way
+        /// Occurs when the <see cref="UseGroupSeparator"/> property has been changed in some way.
         /// </summary>
         public event RoutedPropertyChangedEventHandler<bool> UseGroupSeparatorChanged
         {
@@ -191,13 +191,13 @@ namespace ag.WPF.UpDown
             remove => RemoveHandler(UseGroupSeparatorChangedEvent, value);
         }
         /// <summary>
-        /// Identifies the <see cref="UseGroupSeparatorChanged"/> routed event
+        /// Identifies the <see cref="UseGroupSeparatorChanged"/> routed event.
         /// </summary>
         public static readonly RoutedEvent UseGroupSeparatorChangedEvent = EventManager.RegisterRoutedEvent("UseGroupSeparatorChanged",
             RoutingStrategy.Bubble, typeof(RoutedPropertyChangedEventHandler<bool>), typeof(UpDown));
 
         /// <summary>
-        /// Occurs when the <see cref="DecimalPlaces"/> property has been changed in some way
+        /// Occurs when the <see cref="DecimalPlaces"/> property has been changed in some way.
         /// </summary>
         public event RoutedPropertyChangedEventHandler<uint> DecimalPlacesChanged
         {
@@ -205,13 +205,13 @@ namespace ag.WPF.UpDown
             remove => RemoveHandler(DecimalPlacesChangedEvent, value);
         }
         /// <summary>
-        /// Identifies the <see cref="DecimalPlacesChanged"/> routed event
+        /// Identifies the <see cref="DecimalPlacesChanged"/> routed event.
         /// </summary>
         public static readonly RoutedEvent DecimalPlacesChangedEvent = EventManager.RegisterRoutedEvent("DecimalPlacesChanged",
             RoutingStrategy.Bubble, typeof(RoutedPropertyChangedEventHandler<uint>), typeof(UpDown));
 
         /// <summary>
-        /// Occurs when the <see cref="NegativeForeground"/> property has been changed in some way
+        /// Occurs when the <see cref="NegativeForeground"/> property has been changed in some way.
         /// </summary>
         public event RoutedPropertyChangedEventHandler<SolidColorBrush> NegativeForegroundChanged
         {
@@ -219,12 +219,13 @@ namespace ag.WPF.UpDown
             remove => RemoveHandler(NegativeForegroundChangedEvent, value);
         }
         /// <summary>
-        /// Identifies the <see cref="NegativeForegroundChanged"/> routed event
+        /// Identifies the <see cref="NegativeForegroundChanged"/> routed event.
         /// </summary>
         public static readonly RoutedEvent NegativeForegroundChangedEvent = EventManager.RegisterRoutedEvent("NegativeForegroundChanged",
             RoutingStrategy.Direct, typeof(RoutedPropertyChangedEventHandler<SolidColorBrush>), typeof(UpDown));
+
         /// <summary>
-        /// Occurs when the <see cref="Step"/> property has been changed in some way
+        /// Occurs when the <see cref="Step"/> property has been changed in some way.
         /// </summary>
         public event RoutedPropertyChangedEventHandler<decimal> StepChanged
         {
@@ -232,12 +233,13 @@ namespace ag.WPF.UpDown
             remove => RemoveHandler(StepChangedEvent, value);
         }
         /// <summary>
-        /// Identifies the <see cref="StepChanged"/> routed event
+        /// Identifies the <see cref="StepChanged"/> routed event.
         /// </summary>
         public static readonly RoutedEvent StepChangedEvent = EventManager.RegisterRoutedEvent("StepChanged",
             RoutingStrategy.Direct, typeof(RoutedPropertyChangedEventHandler<decimal>), typeof(UpDown));
+
         /// <summary>
-        /// Occurs when the <see cref="MinValue"/> property has been changed in some way
+        /// Occurs when the <see cref="MinValue"/> property has been changed in some way.
         /// </summary>
         public event RoutedPropertyChangedEventHandler<decimal> MinValueChanged
         {
@@ -245,12 +247,13 @@ namespace ag.WPF.UpDown
             remove => RemoveHandler(MinValueChangedEvent, value);
         }
         /// <summary>
-        /// Identifies the <see cref="MinValueChanged"/> routed event
+        /// Identifies the <see cref="MinValueChanged"/> routed event.
         /// </summary>
         public static readonly RoutedEvent MinValueChangedEvent = EventManager.RegisterRoutedEvent("MinValueChanged",
             RoutingStrategy.Direct, typeof(RoutedPropertyChangedEventHandler<decimal>), typeof(UpDown));
+
         /// <summary>
-        /// Occurs when the <see cref="MaxValueChanged"/> property has been changed in some way
+        /// Occurs when the <see cref="MaxValueChanged"/> property has been changed in some way.
         /// </summary>
         public event RoutedPropertyChangedEventHandler<decimal> MaxValueChanged
         {
@@ -258,12 +261,13 @@ namespace ag.WPF.UpDown
             remove => RemoveHandler(MaxValueChangedEvent, value);
         }
         /// <summary>
-        /// Identifies the <see cref="MaxValueChanged"/> routed event
+        /// Identifies the <see cref="MaxValueChanged"/> routed event.
         /// </summary>
         public static readonly RoutedEvent MaxValueChangedEvent = EventManager.RegisterRoutedEvent("MaxValueChanged",
             RoutingStrategy.Direct, typeof(RoutedPropertyChangedEventHandler<decimal>), typeof(UpDown));
+
         /// <summary>
-        /// Occurs when the <see cref="Value"/> property has been changed in some way
+        /// Occurs when the <see cref="Value"/> property has been changed in some way.
         /// </summary>
         public event RoutedPropertyChangedEventHandler<decimal> ValueChanged
         {
@@ -271,7 +275,7 @@ namespace ag.WPF.UpDown
             remove => RemoveHandler(ValueChangedEvent, value);
         }
         /// <summary>
-        /// Identifies the <see cref="ValueChanged"/> routed event
+        /// Identifies the <see cref="ValueChanged"/> routed event.
         /// </summary>
         public static readonly RoutedEvent ValueChangedEvent = EventManager.RegisterRoutedEvent("ValueChanged",
             RoutingStrategy.Bubble, typeof(RoutedPropertyChangedEventHandler<decimal>), typeof(UpDown));
@@ -471,7 +475,7 @@ namespace ag.WPF.UpDown
 
         #region Overrides
         /// <summary>
-        /// Is invoked whenever application code or internal processes call ApplyTemplate
+        /// Is invoked whenever application code or internal processes call ApplyTemplate.
         /// </summary>
         public override void OnApplyTemplate()
         {

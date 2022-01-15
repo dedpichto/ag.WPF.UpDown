@@ -8,11 +8,11 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("ag.WPF.UpDown")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Custom WPF control with button spinners that allows incrementing and decrementing numeric values by using the spinner buttons and keyboard up/down arrows.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Andrey Gruber")]
 [assembly: AssemblyProduct("ag.WPF.UpDown")]
-[assembly: AssemblyCopyright("Copyright ©  2022")]
+[assembly: AssemblyCopyright("Copyright © Andrey Gruber 2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
