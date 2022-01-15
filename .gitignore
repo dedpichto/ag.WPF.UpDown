@@ -351,3 +351,6 @@ MigrationBackup/
 
 # Test projects
 Test*/
+
+# bak files
+*.bak
