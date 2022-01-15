@@ -2,7 +2,7 @@
 
 Custom WPF UpDown control with button spinners that allows incrementing and decrementing numeric values by using the spinner buttons and keyboard up/down arrows
 
-.NET Frameword | .NET
+.NET Framework | .NET
 |--|---
 ![Nuget](https://img.shields.io/nuget/v/ag.WPF.UpDown) | ![Nuget](https://img.shields.io/nuget/v/ag.WPF.UpDown.NET)
 
@@ -12,7 +12,7 @@ Custom WPF UpDown control with button spinners that allows incrementing and decr
 
 Use Nuget packages
 
-.NET Frameword | .NET
+.NET Framework | .NET
 |--|---
 [ag.WPF.UpDown](https://www.nuget.org/packages/ag.WPF.UpDown/) | [ag.WPF.UpDown.NET](https://www.nuget.org/packages/ag.WPF.UpDown.NET/)
 
