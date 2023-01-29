@@ -15,7 +15,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageId>ag.WPF.UpDown</PackageId>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <Product>ag.WPF.UpDown</Product>
     <PackageProjectUrl>https://github.com/dedpichto/ag.WPF.UpDown</PackageProjectUrl>
     <AssemblyName>ag.WPF.UpDown</AssemblyName>

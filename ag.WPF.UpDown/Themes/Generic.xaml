@@ -57,7 +57,7 @@
                                     </MultiBinding>
                                 </TextBox.Foreground>
                             </TextBox>
-                            <Grid Grid.Column="1" VerticalAlignment="Stretch">
+                            <Grid x:Name="gridUpDown" Grid.Column="1" VerticalAlignment="Stretch">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="*"/>
@@ -79,6 +79,9 @@
                         <Trigger Property="IsEnabled" Value="false">
                             <Setter Property="Fill" TargetName="RepeatButtonArrowUp" Value="{StaticResource DisabledBrush}"/>
                             <Setter Property="Fill" TargetName="RepeatButtonArrowDown" Value="{StaticResource DisabledBrush}"/>
+                        </Trigger>
+                        <Trigger Property="ShowUpDown" Value="False">
+                            <Setter Property="Visibility" TargetName="gridUpDown" Value="Collapsed"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

@@ -51,18 +51,18 @@ namespace ag.WPF.UpDown
         /// <summary>
         /// The identifier of the <see cref="Value"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(decimal), typeof(UpDown),
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(decimal?), typeof(UpDown),
                 new FrameworkPropertyMetadata(0m, OnValueChanged, ConstraintValue));
         /// <summary>
         /// The identifier of the <see cref="MaxValue"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty MaxValueProperty = DependencyProperty.Register(nameof(MaxValue), typeof(decimal), typeof(UpDown),
-                new FrameworkPropertyMetadata(100m, OnMaxValueChanged, CoerceMaximum));
+                new FrameworkPropertyMetadata(decimal.MaxValue, OnMaxValueChanged, CoerceMaximum));
         /// <summary>
         /// The identifier of the <see cref="MinValue"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty MinValueProperty = DependencyProperty.Register(nameof(MinValue), typeof(decimal), typeof(UpDown),
-                new FrameworkPropertyMetadata(0m, OnMinValueChanged));
+                new FrameworkPropertyMetadata(decimal.MinValue, OnMinValueChanged));
         /// <summary>
         /// The identifier of the <see cref="Step"/> dependency property.
         /// </summary>
@@ -88,6 +88,16 @@ namespace ag.WPF.UpDown
         /// </summary>
         public static readonly DependencyProperty UseGroupSeparatorProperty = DependencyProperty.Register(nameof(UseGroupSeparator), typeof(bool), typeof(UpDown),
                 new FrameworkPropertyMetadata(true, OnUseGroupSeparatorChanged));
+        /// <summary>
+        /// The identifier of the <see cref="ShowUpDown"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty ShowUpDownProperty = DependencyProperty.Register(nameof(ShowUpDown), typeof(bool), typeof(UpDown),
+            new FrameworkPropertyMetadata(true, OnShowUpDownChanged));
+        /// <summary>
+        /// The identifier of the <see cref="ShowUpDown"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty AllowNullValueProperty = DependencyProperty.Register(nameof(AllowNullValue), typeof(bool), typeof(UpDown),
+            new FrameworkPropertyMetadata(false, OnAllowNullValueChanged));
         #endregion
 
         private CurrentPosition _Position;
@@ -98,6 +108,23 @@ namespace ag.WPF.UpDown
         }
 
         #region Public dependency properties handlers
+        /// <summary>
+        /// Gets or sets the value that indicates whether UpDown can show empty text field.
+        /// </summary>
+        public bool AllowNullValue
+        {
+            get => (bool)GetValue(AllowNullValueProperty);
+            set => SetValue(AllowNullValueProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the value that indicates whether up and down buttons are visible.
+        /// </summary>
+        public bool ShowUpDown
+        {
+            get => (bool)GetValue(ShowUpDownProperty);
+            set => SetValue(ShowUpDownProperty, value);
+        }
 
         /// <summary>
         /// Gets or sets the value that indicates whether group separator is used for number formatting.
@@ -160,9 +187,9 @@ namespace ag.WPF.UpDown
         /// <summary>
         /// Gets or sets the value of UpDown.
         /// </summary>
-        public decimal Value
+        public decimal? Value
         {
-            get => (decimal)GetValue(ValueProperty);
+            get => (decimal?)GetValue(ValueProperty);
             set => SetValue(ValueProperty, value);
         }
         #endregion
@@ -194,6 +221,34 @@ namespace ag.WPF.UpDown
         /// Identifies the <see cref="UseGroupSeparatorChanged"/> routed event.
         /// </summary>
         public static readonly RoutedEvent UseGroupSeparatorChangedEvent = EventManager.RegisterRoutedEvent("UseGroupSeparatorChanged",
+            RoutingStrategy.Bubble, typeof(RoutedPropertyChangedEventHandler<bool>), typeof(UpDown));
+
+        /// <summary>
+        /// Occurs when the <see cref="ShowUpDown"/> property has been changed in some way.
+        /// </summary>
+        public event RoutedPropertyChangedEventHandler<bool> ShowUpDownChanged
+        {
+            add => AddHandler(ShowUpDownChangedEvent, value);
+            remove => RemoveHandler(ShowUpDownChangedEvent, value);
+        }
+        /// <summary>
+        /// Identifies the <see cref="ShowUpDownChanged"/> routed event.
+        /// </summary>
+        public static readonly RoutedEvent ShowUpDownChangedEvent = EventManager.RegisterRoutedEvent("ShowUpDownChanged",
+            RoutingStrategy.Bubble, typeof(RoutedPropertyChangedEventHandler<bool>), typeof(UpDown));
+
+        /// <summary>
+        /// Occurs when the <see cref="AllowNullValue"/> property has been changed in some way.
+        /// </summary>
+        public event RoutedPropertyChangedEventHandler<bool> AllowNullValueChanged
+        {
+            add => AddHandler(AllowNullValueChangedEvent, value);
+            remove => RemoveHandler(AllowNullValueChangedEvent, value);
+        }
+        /// <summary>
+        /// Identifies the <see cref="AllowNullValueChanged"/> routed event.
+        /// </summary>
+        public static readonly RoutedEvent AllowNullValueChangedEvent = EventManager.RegisterRoutedEvent("AllowNullValueChanged",
             RoutingStrategy.Bubble, typeof(RoutedPropertyChangedEventHandler<bool>), typeof(UpDown));
 
         /// <summary>
@@ -302,6 +357,46 @@ namespace ag.WPF.UpDown
         }
 
         /// <summary>
+        /// Invoked just before the <see cref="ShowUpDownChanged"/> event is raised on UpDown
+        /// </summary>
+        /// <param name="oldValue">Old value</param>
+        /// <param name="newValue">New value</param>
+        private void OnShowUpDownChanged(bool oldValue, bool newValue)
+        {
+            var e = new RoutedPropertyChangedEventArgs<bool>(oldValue, newValue)
+            {
+                RoutedEvent = ShowUpDownChangedEvent
+            };
+            RaiseEvent(e);
+        }
+
+        private static void OnShowUpDownChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (sender is not UpDown upd) return;
+            upd.OnShowUpDownChanged((bool)e.OldValue, (bool)e.NewValue);
+        }
+
+        /// <summary>
+        /// Invoked just before the <see cref="AllowNullValueChanged"/> event is raised on UpDown
+        /// </summary>
+        /// <param name="oldValue">Old value</param>
+        /// <param name="newValue">New value</param>
+        private void OnAllowNullValueChanged(bool oldValue, bool newValue)
+        {
+            var e = new RoutedPropertyChangedEventArgs<bool>(oldValue, newValue)
+            {
+                RoutedEvent = AllowNullValueChangedEvent
+            };
+            RaiseEvent(e);
+        }
+
+        private static void OnAllowNullValueChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (sender is not UpDown upd) return;
+            upd.OnAllowNullValueChanged((bool)e.OldValue, (bool)e.NewValue);
+        }
+
+        /// <summary>
         /// Invoked just before the <see cref="UseGroupSeparatorChanged"/> event is raised on UpDown
         /// </summary>
         /// <param name="oldValue">Old value</param>
@@ -320,6 +415,7 @@ namespace ag.WPF.UpDown
             if (sender is not UpDown upd) return;
             upd.OnUseGroupSeparatorChanged((bool)e.OldValue, (bool)e.NewValue);
         }
+
         /// <summary>
         /// Invoked just before the <see cref="NegativeForegroundChanged"/> event is raised on UpDown
         /// </summary>
@@ -561,10 +657,7 @@ namespace ag.WPF.UpDown
             }
         }
 
-        private void TextBox_PreviewMouseRightButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            e.Handled = true;
-        }
+        private void TextBox_PreviewMouseRightButtonUp(object sender, MouseButtonEventArgs e) => e.Handled = true;
 
         private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
@@ -596,7 +689,7 @@ namespace ag.WPF.UpDown
                         }
                         if ((_textBox.SelectionLength == _textBox.Text.Length) || (_textBox.CaretIndex == 0 && _textBox.Text.Length == 1))
                         {
-                            Value = MinValue;
+                            Value = AllowNullValue ? null : 0;
                             e.Handled = true;
                             break;
                         }
@@ -625,7 +718,7 @@ namespace ag.WPF.UpDown
                         }
                         if ((_textBox.SelectionLength == _textBox.Text.Length) || (_textBox.CaretIndex == 1 && _textBox.Text.Length == 1))
                         {
-                            Value = MinValue;
+                            Value = AllowNullValue ? null : 0;
                             e.Handled = true;
                             break;
                         }
@@ -666,7 +759,7 @@ namespace ag.WPF.UpDown
                     case Key.NumPad8:
                     case Key.D9:
                     case Key.NumPad9:
-                        if (IsReadOnly || (Value == MaxValue && _textBox.SelectionLength != _textBox.Text.Length))
+                        if (IsReadOnly || (Value.HasValue && Value == MaxValue && _textBox.SelectionLength != _textBox.Text.Length))
                         {
                             e.Handled = true;
                             break;
@@ -778,12 +871,17 @@ namespace ag.WPF.UpDown
         {
             if (plus)
             {
-                if (Value + Step <= MaxValue)
+                if (Value == null)
+                    Value = Step;
+                else if (Value + Step <= MaxValue)
                     Value += Step;
             }
-            else if (Value - Step >= MinValue)
+            else
             {
-                Value -= Step;
+                if (Value == null)
+                    Value = -Step;
+                else if (Value - Step >= MinValue)
+                    Value -= Step;
             }
         }
         #endregion
@@ -816,10 +914,7 @@ namespace ag.WPF.UpDown
         /// <param name="parameter">Not used.</param>
         /// <param name="culture">Not used.</param>
         /// <returns>Not used.</returns>
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => throw new NotImplementedException();
     }
 
     /// <summary>
@@ -863,7 +958,7 @@ namespace ag.WPF.UpDown
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             if (value is not string stringValue) return null;
-            if (string.IsNullOrEmpty(stringValue)) stringValue = "0";
+            if (string.IsNullOrEmpty(stringValue) || stringValue == "-") stringValue = "0";
             stringValue = stringValue.Replace(culture.NumberFormat.NumberGroupSeparator, "");
             return new object[] { decimal.Parse(stringValue, NumberStyles.Any) };
         }
