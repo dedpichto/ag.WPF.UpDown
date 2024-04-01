@@ -42,6 +42,7 @@ NegativeForeground | SolidColorBrush | Gets or sets the Brush to apply to the te
 Step | decimal | Gets or sets the value to increment or decrement UpDown when the up or down buttons are clicked | 1
 UseGroupSeparator | bool | Gets or sets the value that indicates whether group separator is used for number formatting | True
 Value | decimal | Gets or sets the value of UpDown | 0
+ShowTrailingZeros | bool | Gets or sets the value that indicates whether trailing zeros in decimal part of UpDown should be shown | True
 
 ## Events
 

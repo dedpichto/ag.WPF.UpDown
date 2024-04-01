@@ -39,11 +39,13 @@
                             </Grid.ColumnDefinitions>
                             <TextBox Grid.Column="0" x:Name="PART_Text" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" BorderThickness="0" Padding="2">
                                 <TextBox.Text>
-                                    <MultiBinding Converter="{StaticResource UpDownTextToValueConverter}" Mode="TwoWay">
+                                    <MultiBinding Converter="{StaticResource UpDownTextToValueConverter}" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                                         <MultiBinding.Bindings>
                                             <Binding Path="Value" RelativeSource="{RelativeSource Mode=TemplatedParent}"/>
                                             <Binding Path="DecimalPlaces" RelativeSource="{RelativeSource Mode=TemplatedParent}"/>
                                             <Binding Path="UseGroupSeparator" RelativeSource="{RelativeSource Mode=TemplatedParent}"/>
+                                            <Binding Path="ShowTrailingZeros" RelativeSource="{RelativeSource Mode=TemplatedParent}"/>
+                                            <Binding Path="IsFocused" ElementName="PART_Text" Mode="OneWay"/>
                                         </MultiBinding.Bindings>
                                     </MultiBinding>
                                 </TextBox.Text>
