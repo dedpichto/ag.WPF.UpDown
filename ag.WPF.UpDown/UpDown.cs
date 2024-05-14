@@ -54,7 +54,7 @@ namespace ag.WPF.UpDown
         /// The identifier of the <see cref="Value"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(decimal?), typeof(UpDown),
-                new FrameworkPropertyMetadata(0m, OnValueChanged, ConstraintValue));
+                new FrameworkPropertyMetadata(0m, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValueChanged, ConstraintValue));
         /// <summary>
         /// The identifier of the <see cref="MaxValue"/> dependency property.
         /// </summary>
