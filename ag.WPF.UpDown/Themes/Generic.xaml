@@ -23,7 +23,6 @@
     <Style TargetType="{x:Type local:UpDown}">
         <Setter Property="Height" Value="21"/>
         <Setter Property="MinHeight" Value="19"/>
-        <Setter Property="KeyboardNavigation.TabNavigation" Value="Once"/>
         <Setter Property="Focusable" Value="False"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -37,7 +36,15 @@
                                 <ColumnDefinition/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0" x:Name="PART_Text" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" BorderThickness="0" Padding="2">
+                            <TextBox Grid.Column="0" x:Name="PART_Text" 
+                                     VerticalContentAlignment="Center" 
+                                     HorizontalContentAlignment="Right" 
+                                     BorderThickness="0" 
+                                     Padding="2"
+                                     KeyboardNavigation.TabNavigation="Once"
+                                     Focusable="True"
+                                     TabIndex="{TemplateBinding TabIndex}"
+                                     IsTabStop="{TemplateBinding IsTabStop}">
                                 <TextBox.Text>
                                     <MultiBinding Converter="{StaticResource UpDownTextToValueConverter}" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                                         <MultiBinding.Bindings>
