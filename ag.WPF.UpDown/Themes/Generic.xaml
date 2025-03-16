@@ -1,10 +1,8 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:num="clr-namespace:ag.WPF.NumericBox;assembly=ag.WPF.NumericBox"
     xmlns:local="clr-namespace:ag.WPF.UpDown">
-
-    <local:UpDownTextToValueConverter x:Key="UpDownTextToValueConverter"/>
-    <local:UpDownForegroundConverter x:Key="UpDownForegroundConverter"/>
 
     <Geometry x:Key="UpArrow">M 2 6 L 10 6 L 6 2 Z</Geometry>
     <Geometry x:Key="DownArrow">M 2 0 L 6 4 L 10 0 Z</Geometry>
@@ -36,36 +34,12 @@
                                 <ColumnDefinition/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0" x:Name="PART_Text" 
-                                     VerticalContentAlignment="Center" 
-                                     HorizontalContentAlignment="Right" 
-                                     BorderThickness="0" 
-                                     Padding="2"
-                                     KeyboardNavigation.TabNavigation="Once"
-                                     Focusable="True"
-                                     TabIndex="{TemplateBinding TabIndex}"
-                                     IsTabStop="{TemplateBinding IsTabStop}">
-                                <TextBox.Text>
-                                    <MultiBinding Converter="{StaticResource UpDownTextToValueConverter}" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                        <MultiBinding.Bindings>
-                                            <Binding Path="Value" RelativeSource="{RelativeSource Mode=TemplatedParent}"/>
-                                            <Binding Path="DecimalPlaces" RelativeSource="{RelativeSource Mode=TemplatedParent}"/>
-                                            <Binding Path="UseGroupSeparator" RelativeSource="{RelativeSource Mode=TemplatedParent}"/>
-                                            <Binding Path="ShowTrailingZeros" RelativeSource="{RelativeSource Mode=TemplatedParent}"/>
-                                            <Binding Path="IsFocused" ElementName="PART_Text" Mode="OneWay"/>
-                                        </MultiBinding.Bindings>
-                                    </MultiBinding>
-                                </TextBox.Text>
-                                <TextBox.Foreground>
-                                    <MultiBinding Converter="{StaticResource UpDownForegroundConverter}">
-                                        <MultiBinding.Bindings>
-                                            <Binding Path="Value" RelativeSource="{RelativeSource Mode=TemplatedParent}"/>
-                                            <Binding Path="Foreground" RelativeSource="{RelativeSource Mode=TemplatedParent}"/>
-                                            <Binding Path="NegativeForeground" RelativeSource="{RelativeSource Mode=TemplatedParent}"/>
-                                        </MultiBinding.Bindings>
-                                    </MultiBinding>
-                                </TextBox.Foreground>
-                            </TextBox>
+                            <num:NumericBox x:Name="PART_Num" Grid.Column="0"
+                                            BorderThickness="0"
+                                            KeyboardNavigation.TabNavigation="Once"
+                                            Focusable="True"
+                                            TabIndex="{TemplateBinding TabIndex}"
+                                            IsTabStop="{TemplateBinding IsTabStop}"/>
                             <Grid x:Name="gridUpDown" Grid.Column="1" VerticalAlignment="Stretch">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>

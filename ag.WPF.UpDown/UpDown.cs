@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ag.WPF.NumericBox;
+using System;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
@@ -14,7 +15,7 @@ namespace ag.WPF.UpDown
     /// Represents custom control with button spinners that allows incrementing and decrementing numeric values by using the spinner buttons and keyboard up/down arrows.
     /// </summary>
     #region Named parts
-    [TemplatePart(Name = ElementText, Type = typeof(TextBox))]
+    [TemplatePart(Name = ElementNum, Type = typeof(NumericBox.NumericBox))]
     [TemplatePart(Name = ElementButtonUp, Type = typeof(RepeatButton))]
     [TemplatePart(Name = ElementButtonDown, Type = typeof(RepeatButton))]
     #endregion
@@ -38,13 +39,13 @@ namespace ag.WPF.UpDown
         }
 
         #region Constants
-        private const string ElementText = "PART_Text";
+        private const string ElementNum = "PART_Num";
         private const string ElementButtonUp = "PART_Up";
         private const string ElementButtonDown = "PART_Down";
         #endregion
 
         #region Elements
-        private TextBox _textBox;
+        private NumericBox.NumericBox _numericBox;
         private RepeatButton _upButton;
         private RepeatButton _downButton;
         #endregion
@@ -54,7 +55,7 @@ namespace ag.WPF.UpDown
         /// The identifier of the <see cref="Value"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(decimal?), typeof(UpDown),
-                new FrameworkPropertyMetadata(0m, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValueChanged, ConstraintValue));
+                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValueChanged, ConstraintValue));
         /// <summary>
         /// The identifier of the <see cref="MaxValue"/> dependency property.
         /// </summary>
@@ -96,15 +97,20 @@ namespace ag.WPF.UpDown
         public static readonly DependencyProperty ShowUpDownProperty = DependencyProperty.Register(nameof(ShowUpDown), typeof(bool), typeof(UpDown),
             new FrameworkPropertyMetadata(true, OnShowUpDownChanged));
         /// <summary>
-        /// The identifier of the <see cref="ShowUpDown"/> dependency property.
-        /// </summary>
-        public static readonly DependencyProperty AllowNullValueProperty = DependencyProperty.Register(nameof(AllowNullValue), typeof(bool), typeof(UpDown),
-            new FrameworkPropertyMetadata(false, OnAllowNullValueChanged));
-        /// <summary>
         /// The identifier of the <see cref="ShowTrailingZeros"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ShowTrailingZerosProperty = DependencyProperty.Register(nameof(ShowTrailingZeros), typeof(bool), typeof(UpDown),
                 new FrameworkPropertyMetadata(true, OnShowTrailingZerosChanged));
+        // <summary>
+        /// The identifier of the <see cref="Text"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(UpDown),
+                new FrameworkPropertyMetadata("", OnTextChanged));
+        /// <summary>
+        /// The identifier of the <see cref="TextAlignment"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty TextAlignmentProperty = DependencyProperty.Register(nameof(TextAlignment), typeof(TextAlignment), typeof(UpDown),
+                new FrameworkPropertyMetadata(TextAlignment.Left, OnTextAlignmentChanged));
         #endregion
 
         private CurrentPosition _position;
@@ -125,14 +131,6 @@ namespace ag.WPF.UpDown
             set => SetValue(ShowTrailingZerosProperty, value);
         }
 
-        /// <summary>
-        /// Gets or sets the value that indicates whether UpDown can show empty text field.
-        /// </summary>
-        public bool AllowNullValue
-        {
-            get => (bool)GetValue(AllowNullValueProperty);
-            set => SetValue(AllowNullValueProperty, value);
-        }
 
         /// <summary>
         /// Gets or sets the value that indicates whether up and down buttons are visible.
@@ -209,9 +207,45 @@ namespace ag.WPF.UpDown
             get => (decimal?)GetValue(ValueProperty);
             set => SetValue(ValueProperty, value);
         }
+        /// <summary>
+        /// Gets or sets the text of UpDown.
+        /// </summary>
+        public string Text
+        {
+            get => (string)GetValue(TextProperty);
+            set
+            {
+                if (_numericBox != null)
+                {
+                    _numericBox.Text = value;
+                }
+            }
+        }
+        /// <summary>
+        /// Gets or sets the text alignment of NumericBox.
+        /// </summary>
+        public TextAlignment TextAlignment
+        {
+            get => (TextAlignment)GetValue(TextAlignmentProperty);
+            set => SetValue(TextAlignmentProperty, value);
+        }
         #endregion
 
         #region Routed events
+        /// <summary>
+        /// Occurs when the <see cref="TextAlignment"/> property has been changed in some way.
+        /// </summary>
+        public event RoutedPropertyChangedEventHandler<TextAlignment> TextAlignmentChanged
+        {
+            add => AddHandler(TextAlignmentChangedEvent, value);
+            remove => RemoveHandler(TextAlignmentChangedEvent, value);
+        }
+        /// <summary>
+        /// Identifies the <see cref="TextAlignmentChanged"/> routed event.
+        /// </summary>
+        public static readonly RoutedEvent TextAlignmentChangedEvent = EventManager.RegisterRoutedEvent("TextAlignmentChanged",
+            RoutingStrategy.Bubble, typeof(RoutedPropertyChangedEventHandler<TextAlignment>), typeof(UpDown));
+
         /// <summary>
         /// Occurs when the <see cref="IsReadOnly"/> property has been changed in some way.
         /// </summary>
@@ -225,6 +259,20 @@ namespace ag.WPF.UpDown
         /// </summary>
         public static readonly RoutedEvent IsReadOnlyChangedEvent = EventManager.RegisterRoutedEvent("IsReadOnlyChanged",
             RoutingStrategy.Bubble, typeof(RoutedPropertyChangedEventHandler<bool>), typeof(UpDown));
+
+        /// <summary>
+        /// Occurs when the <see cref="Text"/> property has been changed in some way.
+        /// </summary>
+        public event RoutedPropertyChangedEventHandler<string> TextChanged
+        {
+            add => AddHandler(TextChangedEvent, value);
+            remove => RemoveHandler(TextChangedEvent, value);
+        }
+        /// <summary>
+        /// Identifies the <see cref="TextChanged"/> routed event.
+        /// </summary>
+        public static readonly RoutedEvent TextChangedEvent = EventManager.RegisterRoutedEvent("TextChanged",
+            RoutingStrategy.Bubble, typeof(RoutedPropertyChangedEventHandler<string>), typeof(UpDown));
 
         /// <summary>
         /// Occurs when the <see cref="UseGroupSeparator"/> property has been changed in some way.
@@ -252,20 +300,6 @@ namespace ag.WPF.UpDown
         /// Identifies the <see cref="ShowUpDownChanged"/> routed event.
         /// </summary>
         public static readonly RoutedEvent ShowUpDownChangedEvent = EventManager.RegisterRoutedEvent("ShowUpDownChanged",
-            RoutingStrategy.Bubble, typeof(RoutedPropertyChangedEventHandler<bool>), typeof(UpDown));
-
-        /// <summary>
-        /// Occurs when the <see cref="AllowNullValue"/> property has been changed in some way.
-        /// </summary>
-        public event RoutedPropertyChangedEventHandler<bool> AllowNullValueChanged
-        {
-            add => AddHandler(AllowNullValueChangedEvent, value);
-            remove => RemoveHandler(AllowNullValueChangedEvent, value);
-        }
-        /// <summary>
-        /// Identifies the <see cref="AllowNullValueChanged"/> routed event.
-        /// </summary>
-        public static readonly RoutedEvent AllowNullValueChangedEvent = EventManager.RegisterRoutedEvent("AllowNullValueChanged",
             RoutingStrategy.Bubble, typeof(RoutedPropertyChangedEventHandler<bool>), typeof(UpDown));
 
         /// <summary>
@@ -370,6 +404,26 @@ namespace ag.WPF.UpDown
 
         #region Callback procedures
         /// <summary>
+        /// Invoked just before the <see cref="TextAlignmentChanged"/> event is raised on NumericBox
+        /// </summary>
+        /// <param name="oldValue">Old value</param>
+        /// <param name="newValue">New value</param>
+        private void OnTextAlignmentChanged(TextAlignment oldValue, TextAlignment newValue)
+        {
+            var e = new RoutedPropertyChangedEventArgs<TextAlignment>(oldValue, newValue)
+            {
+                RoutedEvent = TextAlignmentChangedEvent
+            };
+            RaiseEvent(e);
+        }
+
+        private static void OnTextAlignmentChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (sender is not UpDown box) return;
+            box.OnTextAlignmentChanged((TextAlignment)(e.OldValue), (TextAlignment)(e.NewValue));
+        }
+
+        /// <summary>
         /// Invoked just before the <see cref="ShowTrailingZerosChanged"/> event is raised on NumericBox
         /// </summary>
         /// <param name="oldValue">Old value</param>
@@ -386,6 +440,25 @@ namespace ag.WPF.UpDown
         {
             if (sender is not UpDown box) return;
             box.OnShowTrailingZerosChanged((bool)e.OldValue, (bool)e.NewValue);
+        }
+
+        /// <summary>
+        /// Invoked just before the <see cref="TextChanged"/> event is raised on NumericBox
+        /// </summary>
+        /// <param name="oldValue">Old value</param>
+        /// <param name="newValue">New value</param>
+        private void OnTextChanged(string oldValue, string newValue)
+        {
+            var e = new RoutedPropertyChangedEventArgs<string>(oldValue, newValue)
+            {
+                RoutedEvent = TextChangedEvent
+            };
+            RaiseEvent(e);
+        }
+        private static void OnTextChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (sender is not UpDown box) return;
+            box.OnTextChanged((string)e.OldValue, (string)e.NewValue);
         }
 
         /// <summary>
@@ -425,26 +498,6 @@ namespace ag.WPF.UpDown
         {
             if (sender is not UpDown upd) return;
             upd.OnShowUpDownChanged((bool)e.OldValue, (bool)e.NewValue);
-        }
-
-        /// <summary>
-        /// Invoked just before the <see cref="AllowNullValueChanged"/> event is raised on UpDown
-        /// </summary>
-        /// <param name="oldValue">Old value</param>
-        /// <param name="newValue">New value</param>
-        private void OnAllowNullValueChanged(bool oldValue, bool newValue)
-        {
-            var e = new RoutedPropertyChangedEventArgs<bool>(oldValue, newValue)
-            {
-                RoutedEvent = AllowNullValueChangedEvent
-            };
-            RaiseEvent(e);
-        }
-
-        private static void OnAllowNullValueChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (sender is not UpDown upd) return;
-            upd.OnAllowNullValueChanged((bool)e.OldValue, (bool)e.NewValue);
         }
 
         /// <summary>
@@ -614,6 +667,7 @@ namespace ag.WPF.UpDown
         {
             var newValue = Convert.ToDecimal(value);
             if (d is not UpDown upd) return value;
+            if (value is null) return value;
             if (newValue < upd.MinValue) return upd.MinValue;
             return newValue > upd.MaxValue ? upd.MaxValue : value;
         }
@@ -627,32 +681,25 @@ namespace ag.WPF.UpDown
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-
-            if (_textBox != null)
+            if (_numericBox != null)
             {
-                _textBox.GotFocus -= TextBox_GotFocus;
-                _textBox.PreviewKeyDown -= TextBox_PreviewKeyDown;
-                _textBox.PreviewMouseRightButtonUp -= TextBox_PreviewMouseRightButtonUp;
-                _textBox.TextChanged -= TextBox_TextChanged;
-                _textBox.PreviewTextInput -= _textBox_PreviewTextInput;
-                _textBox.LostFocus -= _textBox_LostFocus;
-                _textBox.PreviewMouseLeftButtonDown -= _textBox_PreviewMouseLeftButtonDown;
-                _textBox.CommandBindings.Clear();
+                BindingOperations.ClearAllBindings(_numericBox);
+                BindingOperations.ClearBinding(this, TextProperty);
+                _numericBox.PreviewKeyDown -= _numericBox_PreviewKeyDown;
             }
-            _textBox = GetTemplateChild(ElementText) as TextBox;
-            if (_textBox != null)
+            _numericBox = GetTemplateChild(ElementNum) as NumericBox.NumericBox;
+            if (_numericBox != null)
             {
-                _textBox.GotFocus += TextBox_GotFocus;
-                _textBox.PreviewKeyDown += TextBox_PreviewKeyDown;
-                _textBox.PreviewMouseRightButtonUp += TextBox_PreviewMouseRightButtonUp;
-                _textBox.TextChanged += TextBox_TextChanged;
-                _textBox.PreviewTextInput += _textBox_PreviewTextInput;
-                _textBox.LostFocus += _textBox_LostFocus;
-                _textBox.PreviewMouseLeftButtonDown += _textBox_PreviewMouseLeftButtonDown;
-                _textBox.CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, pasteCommandBinding));
-                _textBox.CommandBindings.Add(new CommandBinding(ApplicationCommands.Cut, cutCommandBinding));
+                _numericBox.SetBinding(NumericBox.NumericBox.DecimalPlacesProperty, new Binding(nameof(DecimalPlaces)) { Source = this });
+                _numericBox.SetBinding(NumericBox.NumericBox.ValueProperty, new Binding(nameof(Value)) { Source = this, Mode = BindingMode.TwoWay });
+                _numericBox.SetBinding(NumericBox.NumericBox.UseGroupSeparatorProperty, new Binding(nameof(UseGroupSeparator)) { Source = this });
+                _numericBox.SetBinding(NumericBox.NumericBox.ShowTrailingZerosProperty, new Binding(nameof(ShowTrailingZeros)) { Source = this });
+                _numericBox.SetBinding(NumericBox.NumericBox.IsReadOnlyProperty, new Binding(nameof(IsReadOnly)) { Source = this });
+                _numericBox.SetBinding(NumericBox.NumericBox.NegativeForegroundProperty, new Binding(nameof(NegativeForeground)) { Source = this });
+                _numericBox.SetBinding(TextProperty, new Binding(nameof(Text)) { Source = _numericBox, Mode = BindingMode.OneWay });
+                _numericBox.SetBinding(NumericBox.NumericBox.TextAlignmentProperty, new Binding(nameof(TextAlignment)) { Source = this });
+                _numericBox.PreviewKeyDown += _numericBox_PreviewKeyDown;
             }
-
             if (_downButton != null)
             {
                 _downButton.Click -= DownButton_Click;
@@ -673,268 +720,42 @@ namespace ag.WPF.UpDown
                 _upButton.Click += UpButton_Click;
             }
         }
+
         #endregion
 
         #region Private event handlers
+
+        private void _numericBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Up)
+            {
+                addStep(true);
+            }
+            else if (e.Key == Key.Down)
+            {
+                addStep(false);
+            }
+        }
+
         private void UpButton_Click(object sender, RoutedEventArgs e)
         {
-            AddStep(true);
-            if (!_textBox.IsFocused)
-                _textBox.Focus();
-            else
-                _textBox.SelectAll();
+            addStep(true);
+            if (!_numericBox.IsFocused)
+                _numericBox.Focus();
         }
 
         private void DownButton_Click(object sender, RoutedEventArgs e)
         {
-            AddStep(false);
-            if (!_textBox.IsFocused)
-                _textBox.Focus();
-            else
-                _textBox.SelectAll();
+            addStep(false);
+            if (!_numericBox.IsFocused)
+                _numericBox.Focus();
         }
 
-        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            _gotFocus = true;
-            _textBox.SelectAll();
-        }
-
-        private void _textBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ClickCount == 2)
-                _textBox.SelectAll();
-        }
-
-        private void _textBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            _gotFocus = false;
-            if (_textBox.Text == CultureInfo.CurrentCulture.NumberFormat.NegativeSign)
-            {
-                Value = null;
-            }
-        }
-
-        private void _textBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            try
-            {
-                _gotFocus = false;
-                if (e.Text == CultureInfo.CurrentCulture.NumberFormat.NumberGroupSeparator)
-                {
-                    e.Handled = true;
-                    return;
-                }
-                else if (e.Text == CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
-                {
-                    if (DecimalPlaces == 0)
-                    {
-                        e.Handled = true;
-                        return;
-                    }
-
-                    if (ShowTrailingZeros)
-                    {
-                        if (_textBox.Text != CultureInfo.CurrentCulture.NumberFormat.NegativeSign)
-                        {
-                            _textBox.CaretIndex = _textBox.Text.IndexOf(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator) + 1;
-                            e.Handled = true;
-                        }
-                        else
-                        {
-                            _position.Key = CurrentKey.Decimal;
-                        }
-                    }
-                    else
-                    {
-                        if (_textBox.Text.IndexOf(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, StringComparison.Ordinal) == -1)
-                        {
-                            _position.Key = CurrentKey.Decimal;
-                        }
-                        else
-                        {
-                            _textBox.CaretIndex = _textBox.Text.IndexOf(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator) + 1;
-                            e.Handled = true;
-                        }
-                    }
-                    return;
-                }
-                else if (e.Text == CultureInfo.CurrentCulture.NumberFormat.NegativeSign)
-                {
-                    if (_textBox.SelectionLength == _textBox.Text.Length)
-                    {
-                        return;
-                    }
-                    if (_textBox.CaretIndex > 0)
-                    {
-                        e.Handled = true;
-                        return;
-                    }
-                }
-                else if (!e.Text.In("0", "1", "2", "3", "4", "5", "6", "7", "8", "9"))
-                {
-                    e.Handled = true;
-                    return;
-                }
-
-                if (ShowTrailingZeros && e.Text.In("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
-                    && _textBox.Text.Contains(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
-                    && _textBox.CaretIndex == _textBox.Text.Length)
-                {
-                    e.Handled = true;
-                    return;
-                }
-                else
-                {
-                    _position.Key = CurrentKey.Number;
-                }
-            }
-            finally
-            {
-                if (!e.Handled)
-                {
-                    setPositionOffset();
-                }
-            }
-        }
-
-
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (!ShowTrailingZeros)
-            {
-                if (_gotFocus)
-                {
-                    _textBox.SelectAll();
-                    _gotFocus = false;
-                }
-                return;
-            }
-
-            if (_position.Exclude)
-                return;
-            if (_position.Key.In(CurrentKey.Number, CurrentKey.Back, CurrentKey.Decimal))
-            {
-                if (_textBox.Text.Length >= _position.Offset)
-                {
-                    _textBox.CaretIndex = _textBox.Text.Length - _position.Offset;
-                }
-            }
-        }
-
-        private void TextBox_PreviewMouseRightButtonUp(object sender, MouseButtonEventArgs e) => e.Handled = true;
-
-        private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            _gotFocus = false;
-            _position.Key = CurrentKey.None;
-            _position.Offset = 0;
-            _position.Exclude = false;
-
-            if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
-            {
-                if (e.Key != Key.Home && e.Key != Key.End)
-                    e.Handled = true;
-                return;
-            }
-            else if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-            {
-                if (!e.Key.In(Key.Home, Key.End, Key.A, Key.C, Key.V, Key.X, Key.Z, Key.Y))
-                    e.Handled = true;
-                return;
-            }
-
-            switch (e.Key)
-            {
-                case Key.Left:
-                case Key.Right:
-                case Key.Home:
-                case Key.End:
-                    break;
-                case Key.Up:
-                    AddStep(true);
-                    _textBox.SelectAll();
-                    e.Handled = true;
-                    break;
-                case Key.Down:
-                    AddStep(false);
-                    _textBox.SelectAll();
-                    e.Handled = true;
-                    break;
-                case Key.Delete:
-                    if ((_textBox.SelectionLength == _textBox.Text.Length) || (_textBox.CaretIndex == 0 && _textBox.Text.Length == 1))
-                    {
-                        Value = null;
-                        e.Handled = true;
-                        break;
-                    }
-                    if ((DecimalPlaces > 0
-                        && _textBox.CaretIndex == _textBox.Text.IndexOf(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator,
-                                StringComparison.Ordinal))
-                                || _textBox.CaretIndex == _textBox.Text.IndexOf(CultureInfo.CurrentCulture.NumberFormat.NumberGroupSeparator,
-                                StringComparison.Ordinal))
-                    {
-                        _textBox.CaretIndex++;
-                        e.Handled = true;
-                        break;
-                    }
-                    break;
-                case Key.Back:
-                    _position.Key = CurrentKey.Back;
-                    if ((_textBox.SelectionLength == _textBox.Text.Length) || (_textBox.CaretIndex == 1 && _textBox.Text.Length == 1))
-                    {
-                        Value = null;
-                        e.Handled = true;
-                        break;
-                    }
-                    if (DecimalPlaces > 0
-                        && _textBox.CaretIndex ==
-                        _textBox.Text.IndexOf(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator,
-                            StringComparison.Ordinal) + 1)
-                    {
-                        _textBox.CaretIndex--;
-                        e.Handled = true;
-                        break;
-                    }
-                    setPositionOffset();
-                    break;
-            }
-        }
         #endregion
 
         #region Private procedures
 
-        private void setPositionOffset()
-        {
-            if (!ShowTrailingZeros) return;
-            if ((_textBox.Text == CultureInfo.CurrentCulture.NumberFormat.NegativeSign && _position.Key != CurrentKey.Decimal) || _textBox.Text.Length == _textBox.SelectionLength || Value == null)
-            {
-                _position.Exclude = true;
-            }
-
-            if (_textBox.Text == CultureInfo.CurrentCulture.NumberFormat.NegativeSign && _position.Key == CurrentKey.Decimal)
-            {
-                if (DecimalPlaces > 0)
-                {
-                    _position.Offset = (int)DecimalPlaces;
-                    return;
-                }
-            }
-
-            var sepPos = _textBox.Text.IndexOf(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator);
-
-            _position.Offset = _textBox.Text.Length == _textBox.SelectionLength
-                ? _textBox.Text.Length - 1
-                : sepPos == -1
-                    ? _textBox.Text.Length - (_textBox.CaretIndex + _textBox.SelectionLength)
-                    : _textBox.CaretIndex <= sepPos
-                        ? _textBox.Text.Length - (_textBox.CaretIndex + _textBox.SelectionLength)
-                        : _position.Key == CurrentKey.Number
-                            ? _textBox.Text.Length - (_textBox.CaretIndex + _textBox.SelectionLength) - 1
-                            : _textBox.Text.Length - (_textBox.CaretIndex + _textBox.SelectionLength) + 1;
-        }
-
-        private void AddStep(bool plus)
+        private void addStep(bool plus)
         {
             if (plus)
             {
@@ -951,268 +772,6 @@ namespace ag.WPF.UpDown
                     Value -= Step;
             }
         }
-
-        private void cutCommandBinding(object sender, ExecutedRoutedEventArgs e)
-        {
-            _position.Offset = 0;
-            _position.Exclude = false;
-            _position.Key = CurrentKey.None;
-
-            if (IsReadOnly)
-            {
-                e.Handled = true;
-                return;
-            }
-
-            Clipboard.SetText(_textBox.SelectedText);
-            if (_textBox.SelectionLength != _textBox.Text.Length)
-                _textBox.Text = _textBox.Text.Substring(0, _textBox.SelectionStart) + _textBox.Text.Substring(_textBox.SelectionStart + _textBox.SelectionLength);
-            else
-                Value = null;
-        }
-
-        private void pasteCommandBinding(object sender, ExecutedRoutedEventArgs e)
-        {
-            _position.Offset = 0;
-            _position.Exclude = false;
-            _position.Key = CurrentKey.None;
-
-            if (IsReadOnly)
-            {
-                e.Handled = true;
-                return;
-            }
-
-            if (Clipboard.ContainsText())
-            {
-                var text = Clipboard.GetText();
-                if (!decimal.TryParse(text, out _))
-                {
-                    e.Handled = true;
-                }
-                else
-                {
-                    _position.Key = CurrentKey.Number;
-                    setPositionOffset();
-                    if (_textBox.SelectionLength > 0)
-                        _textBox.SelectedText = text;
-                    else
-                        _textBox.Text = _textBox.Text.Insert(_textBox.CaretIndex, text);
-                }
-            }
-            else
-            {
-                e.Handled = true;
-            }
-        }
         #endregion
-    }
-
-    internal static class Extensions
-    {
-        internal static bool In<T>(this T obj, params T[] values) => values.Contains(obj);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public class UpDownForegroundConverter : IMultiValueConverter
-    {
-        /// <summary>
-        /// Determines UpDown foreground.
-        /// </summary>
-        /// <param name="values">Array consists of current UpDown value, regular foreground brush and negative foreground brush</param>
-        /// <param name="targetType">Not used.</param>
-        /// <param name="parameter">Not used.</param>
-        /// <param name="culture">Not used.</param>
-        /// <returns>Brush depended on current value sign.</returns>
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (values[0] is not decimal decimalValue || values[1] is not Brush foregroundBrush || values[2] is not Brush negativeBrush) return null;
-            return decimalValue >= 0 ? foregroundBrush : negativeBrush;
-        }
-
-        /// <summary>
-        /// Not implemented.
-        /// </summary>
-        /// <param name="value">Not used.</param>
-        /// <param name="targetTypes">Not used.</param>
-        /// <param name="parameter">Not used.</param>
-        /// <param name="culture">Not used.</param>
-        /// <returns>Not used.</returns>
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// Converts decimal value to string.
-    /// </summary>
-    public class UpDownTextToValueConverter : IMultiValueConverter
-    {
-        private const decimal EPSILON = 0.0000000000000000000000000001m;
-        private string _textValue;
-
-        private string getRealFractionString(decimal value, CultureInfo culture)
-        {
-            var arr = value.ToString().Split(culture.NumberFormat.NumberDecimalSeparator[0]);
-            if (arr.Length == 2)
-                return arr[1];
-            return null;
-        }
-
-        private object[] getDecimalFromString(string stringValue)
-        {
-            if (double.TryParse(stringValue, out double doubleValue))
-            {
-                if (doubleValue <= (double)decimal.MaxValue && doubleValue >= (double)decimal.MinValue)
-                    return new object[] { decimal.Parse(stringValue, NumberStyles.Any) };
-                else if (doubleValue > (double)decimal.MaxValue)
-                    return new object[] { decimal.MaxValue };
-                else
-                    return new object[] { decimal.MinValue };
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Converts decimal value to string.
-        /// </summary>
-        /// <param name="values">Array consists of current UpDown value, decimal places and separator using flag.</param>
-        /// <param name="targetType">Not used.</param>
-        /// <param name="parameter">Not used.</param>
-        /// <param name="culture">Not used.</param>
-        /// <returns>Formatted string.</returns>
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (values[0] is not decimal decimalValue || values[1] is not uint decimalPlaces || values[2] is not bool useSeparator) return "";
-
-            var addMinus = false;
-            var showTrailing = true;
-            var isFocused = false;
-            if (values.Length > 3 && values[3] is bool bl && !bl)
-                showTrailing = false;
-            if (values.Length > 4 && values[4] is bool fc)
-                isFocused = fc;
-
-            if (decimalValue == EPSILON)
-            {
-                var text = _textValue;
-                if (!showTrailing)
-                {
-                    var arr = text.Split(culture.NumberFormat.NumberDecimalSeparator[0]);
-                    if (arr.Length == 2 && !string.IsNullOrEmpty(arr[1]) && arr[1].Length >= decimalPlaces)
-                    {
-                        text = $"{arr[0]}{culture.NumberFormat.NumberDecimalSeparator}{arr[1].TrimEnd('0')}";
-                    }
-                    return text;
-                }
-                else
-                {
-                    if (text == culture.NumberFormat.NegativeSign)
-                    {
-                        return text;
-                    }
-                    else
-                    {
-                        addMinus = true;
-                        decimalValue = 0;
-                    }
-                }
-            }
-            else if (decimalValue == -EPSILON)
-                return null;
-
-            var partInt = decimal.Truncate(decimalValue);
-            var partFraction =
-                Math.Abs(decimal.Truncate((decimalValue - partInt) * (int)Math.Pow(10.0, decimalPlaces)));
-            var formatInt = useSeparator ? "#" + culture.NumberFormat.NumberGroupSeparator + "##0" : "##0";
-            var formatFraction = new string('0', (int)decimalPlaces);
-            var stringInt = partInt.ToString(formatInt);
-            var stringFraction = partFraction.ToString(formatFraction);
-            if (!showTrailing && stringFraction.EndsWith("0"))
-            {
-                var realDecimalString = getRealFractionString(decimalValue, culture);
-                if (realDecimalString == null || realDecimalString.Length >= decimalPlaces)
-                {
-                    stringFraction = stringFraction.TrimEnd('0');
-                }
-                else
-                {
-                    stringFraction = realDecimalString;
-                }
-            }
-            if ((decimalValue < 0 && partInt == 0) || addMinus)
-                stringInt = $"{CultureInfo.CurrentCulture.NumberFormat.NegativeSign}{stringInt}";
-            var result = decimalPlaces > 0
-                ? string.IsNullOrEmpty(stringFraction) && !isFocused ? stringInt : $"{stringInt}{culture.NumberFormat.NumberDecimalSeparator}{stringFraction}"
-                : stringInt;
-            return result;
-        }
-
-        /// <summary>
-        /// Converts string to decimal.
-        /// </summary>
-        /// <param name="value">String.</param>
-        /// <param name="targetTypes">Not used.</param>
-        /// <param name="parameter">Not used.</param>
-        /// <param name="culture">Not used.</param>
-        /// <returns>Decimal.</returns>
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            _textValue = null;
-            if (value is not string stringValue) return null;
-            if (!string.IsNullOrEmpty(stringValue))
-                stringValue = stringValue.Replace(culture.NumberFormat.NumberGroupSeparator, "");
-            else
-                return null;
-            object[] result;
-            if (stringValue != culture.NumberFormat.NegativeSign)
-            {
-                if (stringValue == $"{culture.NumberFormat.NegativeSign}{culture.NumberFormat.NumberDecimalSeparator}")
-                {
-                    result = new object[] { -EPSILON };
-                }
-                else if (stringValue == culture.NumberFormat.NumberDecimalSeparator)
-                {
-                    result = new object[] { -EPSILON };
-                }
-                else if (stringValue == $"{culture.NumberFormat.NegativeSign}0")
-                {
-                    _textValue = stringValue;
-                    result = new object[] { EPSILON };
-                }
-                else if (stringValue.StartsWith($"{culture.NumberFormat.NegativeSign}0{culture.NumberFormat.NumberDecimalSeparator}"))
-                {
-                    if (stringValue == $"{culture.NumberFormat.NegativeSign}0{culture.NumberFormat.NumberDecimalSeparator}")
-                    {
-                        _textValue = stringValue;
-                        result = new object[] { EPSILON };
-                    }
-                    else
-                    {
-                        var arr = stringValue.Split(culture.NumberFormat.NumberDecimalSeparator[0]);
-                        if (arr.Length == 2 && arr[1].All(c => c == '0'))
-                        {
-                            _textValue = $"{culture.NumberFormat.NegativeSign}0{culture.NumberFormat.NumberDecimalSeparator}{arr[1]}";
-                            result = new object[] { EPSILON };
-                        }
-                        else
-                        {
-                            result = getDecimalFromString(stringValue);
-                        }
-                    }
-                }
-                else
-                {
-                    result = getDecimalFromString(stringValue);
-                }
-            }
-            else
-            {
-                _textValue = stringValue;
-                result = new object[] { EPSILON };
-            }
-            return result;
-        }
-#nullable restore
     }
 }
