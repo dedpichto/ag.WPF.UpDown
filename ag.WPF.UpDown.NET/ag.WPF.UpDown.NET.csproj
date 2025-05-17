@@ -15,12 +15,12 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageId>ag.WPF.UpDown</PackageId>
-    <Version>2.0.0</Version>
+    <Version>2.0.1</Version>
     <Product>ag.WPF.UpDown</Product>
     <PackageProjectUrl>https://github.com/dedpichto/ag.WPF.UpDown</PackageProjectUrl>
     <AssemblyName>ag.WPF.UpDown</AssemblyName>
     <RootNamespace>ag.WPF.UpDown</RootNamespace>
-    <PackageReleaseNotes>This release replaces inner textbox by ag.WPF.NumericBox. Note for developers: if you have used to use custom style for NumricBox control with versions prior to 2.0.0, please replace the old resource dictionary by new one from https://github.com/dedpichto/ag.WPF.UpDown/tree/master/ag.WPF.UpDown/Themes</PackageReleaseNotes>
+    <PackageReleaseNotes></PackageReleaseNotes>
   </PropertyGroup>
   
   <ItemGroup>
@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ag.WPF.NumericBox" Version="2.0.8" />
+    <PackageReference Include="ag.WPF.NumericBox" Version="2.0.9" />
   </ItemGroup>
 
   <ItemGroup>
