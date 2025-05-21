@@ -721,6 +721,14 @@ namespace ag.WPF.UpDown
             }
         }
 
+        /// <summary>
+        /// Is invoked when the control gains focus.
+        /// </summary>
+        /// <param name="e">The event data.</param>
+        protected override void OnGotFocus(RoutedEventArgs e)
+        {
+            _numericBox?.Focus();
+        }
         #endregion
 
         #region Private event handlers
